@@ -120,3 +120,7 @@ while True:
 
     else:
         check_wish()
+#Database: Passwort verschlüsseln
+#          speichern neues Passworts
+#          speichern, wie viel das Passwort geändert wurde
+#          Verschiedene Kontos anhand Passwort öffnen bzw. erstellen
