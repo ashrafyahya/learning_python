@@ -1,0 +1,122 @@
+import sys
+
+print("This is an ATM, welcome!\n")
+# learning how to use functions
+actuell_value = 0
+old_value = 0
+saved_password = "12345"
+checked = False
+attempt_counter = 0
+
+def check_password(input_password):
+    global attempt_counter
+    authorized = False
+    global saved_password
+    if input_password == saved_password:
+        authorized = True
+    else:
+        attempt_counter += 1
+        print("Password is wrong!\n")
+        if attempt_counter >= 3:  # Programm beenden, wenn zu viele Fehlversuche
+            print("Too many incorrect attempts. Exiting the program.")
+            sys.exit()
+    return authorized
+
+def deposit(deposited_value):
+    global actuell_value
+    actuell_value += deposited_value
+    return actuell_value
+
+def payout(payedout_value):
+    global actuell_value
+    actuell_value -= payedout_value
+    return actuell_value
+
+def Budget_Infos():
+    global actuell_value
+    return actuell_value
+
+def change_password(new_password):
+    global saved_password
+    saved_password = new_password
+    print("Password successfully updated!\n")
+
+def check_type(type):
+    global attempt_counter
+    while attempt_counter < 3:
+        if type.isnumeric():
+            attempt_counter = 0
+            return int(type)
+        attempt_counter += 1
+        type = input("Wrong input, please try again!: ")
+    print("Too many incorrect attempts. Exiting the program.")
+    sys.exit()
+
+def check_wish():
+    global checked
+    if not checked:
+        password = input("Please enter your password: ")
+        attempt_counter = 0 
+        while not check_password(password):
+            attempt_counter += 1
+            if attempt_counter >= 3:
+                print("Too many incorrect attempts. Exiting the program.")
+                sys.exit()
+            password = input("Wrong password, please try again: ")
+        checked = True
+        print("Password is correct!\n")
+
+password = input("Please enter your password: ")
+password = check_type(password)
+checked = check_password(str(password))
+if checked:
+    print("Password is correct!\n")
+
+while True:
+    if checked:
+        chosen_operation = input(
+            "\nchoose an operation!\nD for Deposit, P for Payout, B for Budget, C for changing password, and E to exit: \t"
+        )
+        operation = chosen_operation.upper()
+
+        available_operations = ["D", "P", "B", "C", "E"]
+
+        if operation not in available_operations:
+            print("Error!\n")
+            continue
+
+        if operation == "D":
+            deposited_value = input("enter the amount to be deposited: ")
+            deposited_value = check_type(deposited_value)
+            new_budget = deposit(deposited_value)
+            actuell_value = new_budget
+            print(f"actuell Budget: {actuell_value} Euro\n")
+            check_wish()
+            
+        elif operation == "P":
+            payedout = int(input("enter the amount to be payedout: "))
+            if actuell_value >= payedout:
+                new_budget = payout(payedout)
+                actuell_value = new_budget
+                print(f"actuell Budget: {actuell_value} Euro\n")
+                check_wish()
+            else:
+                print("You don't have enough Budget!\n")
+                check_wish()
+
+        elif operation == "B":
+            print(f"{actuell_value} Euro\n")
+            check_wish()
+
+        elif operation == "C":
+            new_password = input("Enter the new password: ")
+            new_password = check_type(new_password)
+            change_password(str(new_password))
+            check_wish()
+
+        elif operation == "E":
+            print("Goodbye!")
+            sys.exit()
+
+    else:
+        check_wish()
